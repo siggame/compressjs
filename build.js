@@ -2,7 +2,7 @@
   baseUrl: ".",
   paths: {
   },
-  name: "main",
+  name: "compressjs",
   out: "bin/compressjs.min.js",
   wrap: true
 })
