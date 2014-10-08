@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <title>Test</title>
+    <script src="bower_components/almond/almond.js" type="text/javascript"></script>
+    <script src="bin/compressjs.min.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <h1>Test</h1>
+
+    <script>
+      (function() {
+
+      // Load compress.js
+      var compressjs = require('compressjs');
+      var algorithm = compressjs.Bzip2;
+
+      // Make up some data
+      var message = "Whoooooooooah nelly!"
+      var blob = new Blob([message]);
+
+      // Create a FileReader to read the blob as an ArrayBuffer
+      var f = new FileReader();
+      f.onload = function(e) {
+
+          // Once the blob's been read, load it into a Uint8Array
+          var buffer = new Uint8Array(e.target.result);
+
+          // Compress and uncompress the buffer
+          var compressed = algorithm.compressFile(buffer);
+          var uncompressed = algorithm.decompressFile(compressed);
+
+          // Load the uncompressed result into another blob, which will be read into a string
+          var blob2 = new Blob([uncompressed]);
+          var g = new FileReader();
+          g.onload = function(e) {
+              console.log(e.target.result);
+
+              // Verify that the uncompressed string matches the original
+              if (e.target.result != message) {
+                  console.log("It's broke :C Go cry a lot.")
+              } else {
+                  console.log("It works! :D")
+              }
+              console.log("done!");
+          }
+          g.readAsText(blob2);
+      }
+      f.readAsArrayBuffer(blob);
+      })();
+    </script>
+
+    <address>
+      <a href="mailto:mwwcp2@ece-sendecomp08.device.mst.edu">Michael Wisely</a>
+    </address>
+  </body>
+</html>
