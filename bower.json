@@ -1,0 +1,29 @@
+{
+  "name": "compressjs",
+  "version": "1.0.1",
+  "homepage": "https://github.com/cscott/compressjs",
+  "authors": [
+    "C. Scott Ananian"
+  ],
+  "description": "Pure JavaScript de/compression (bzip2, etc) for node.js, volo, and the browser.",
+  "main": "main.js",
+  "moduleType": [
+  ],
+  "keywords": [
+    "bzip2",
+    "compression",
+    "decompression"
+  ],
+  "license": "GPL",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "almond": "~0.3.0"
+  }
+}
