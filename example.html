@@ -1,56 +1,93 @@
 <html>
   <head>
     <title>Test</title>
-    <script src="bower_components/almond/almond.js" type="text/javascript"></script>
     <script src="bin/compressjs.min.js" type="text/javascript"></script>
   </head>
   <body>
-    <h1>Test</h1>
+    <h1>Choose a File</h1>
+
+    <input type="file" id="files" name="files[]" />
+
+    <h1>Choose a String</h1>
+    <input id="text" type="text" value="John">
+    <input id="submit" type="submit" value="Compress then decompress!!">
+
+    <h1>Output!</h1>
+
+    <div id="output">None yet.</div>
 
     <script>
       (function() {
+        var clearOutput = function() {
+          document.getElementById('output').innerHTML = "";
+        }
 
-      // Load compress.js
-      var compressjs = require('compressjs');
-      var algorithm = compressjs.Bzip2;
+        var updateOutput = function(e) {
+          var text = document.getElementById('output').innerHTML;
+          document.getElementById('output').innerHTML = text + "<hr>" + e.target.result;
+        }
 
-      // Make up some data
-      var message = "Whoooooooooah nelly!"
-      var blob = new Blob([message]);
-
-      // Create a FileReader to read the blob as an ArrayBuffer
-      var f = new FileReader();
-      f.onload = function(e) {
-
-          // Once the blob's been read, load it into a Uint8Array
+        var compress = function(e) {
+          // Once the data's been read, load it into a Uint8Array
           var buffer = new Uint8Array(e.target.result);
 
-          // Compress and uncompress the buffer
-          var compressed = algorithm.compressFile(buffer);
-          var uncompressed = algorithm.decompressFile(compressed);
+          console.log(buffer);
 
-          // Load the uncompressed result into another blob, which will be read into a string
-          var blob2 = new Blob([uncompressed]);
-          var g = new FileReader();
-          g.onload = function(e) {
-              console.log(e.target.result);
+          // Compress the buffer
+          var compressed = compressjs.Bzip2.compressFile(buffer);
 
-              // Verify that the uncompressed string matches the original
-              if (e.target.result != message) {
-                  console.log("It's broke :C Go cry a lot.")
-              } else {
-                  console.log("It works! :D")
-              }
-              console.log("done!");
-          }
-          g.readAsText(blob2);
-      }
-      f.readAsArrayBuffer(blob);
+          console.log(compressed);
+
+          // Load the compressed result
+          var outputter = new FileReader();
+          outputter.onload = updateOutput;
+          outputter.readAsText(new Blob([compressed]));
+
+          var decompressor = new FileReader();
+          decompressor.onload = decompress;
+          decompressor.readAsArrayBuffer(new Blob([compressed]));
+
+          console.log("Finished compressing");
+        }
+
+        var decompress = function(e) {
+          // Once the data's been read, load it into a Uint8Array
+          var buffer = new Uint8Array(e.target.result);
+
+          console.log(buffer);
+
+          // Decompress the buffer
+          var decompressed = compressjs.Bzip2.decompressFile(buffer);
+
+          // Load the decompressed result
+          var reader = new FileReader();
+          reader.onload = updateOutput;
+          reader.readAsText(new Blob([decompressed]));
+
+          console.log("Finished decompressing");
+        }
+
+        var handleFileSelect = function(e) {
+          clearOutput();
+          var file = e.target.files[0];
+          var reader = new FileReader();
+          reader.onload = decompress;
+          reader.readAsArrayBuffer(file);
+        }
+
+        var handleFormSubmit = function(e) {
+          clearOutput();
+          var text = document.getElementById('text').value;
+          var reader = new FileReader();
+          console.log(text);
+          reader.onload = compress;
+          reader.readAsArrayBuffer(new Blob([text]));
+        }
+
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+        document.getElementById('submit').addEventListener('click', handleFormSubmit, false);
       })();
-    </script>
 
-    <address>
-      <a href="mailto:mwwcp2@ece-sendecomp08.device.mst.edu">Michael Wisely</a>
-    </address>
+    </script>
   </body>
 </html>
