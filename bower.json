@@ -6,9 +6,7 @@
     "C. Scott Ananian"
   ],
   "description": "Pure JavaScript de/compression (bzip2, etc) for node.js, volo, and the browser.",
-  "main": "main.js",
-  "moduleType": [
-  ],
+  "main": "bin/compressjs.min.js",
   "keywords": [
     "bzip2",
     "compression",
