@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Test</title>
+    <title>BZ2 Compression Example</title>
     <script src="bin/compressjs.min.js" type="text/javascript"></script>
   </head>
   <body>
@@ -9,8 +9,8 @@
     <input type="file" id="files" name="files[]" />
 
     <h1>Choose a String</h1>
-    <input id="text" type="text" value="John">
-    <input id="submit" type="submit" value="Compress then decompress!!">
+    <input id="text" type="text" value="Compress some strings!">
+    <input id="submit" type="submit" value="Compress then decompress!">
 
     <h1>Output!</h1>
 
@@ -31,18 +31,15 @@
           // Once the data's been read, load it into a Uint8Array
           var buffer = new Uint8Array(e.target.result);
 
-          console.log(buffer);
-
           // Compress the buffer
           var compressed = compressjs.Bzip2.compressFile(buffer);
 
-          console.log(compressed);
-
-          // Load the compressed result
+          // Load the compressed result as a string and output it
           var outputter = new FileReader();
           outputter.onload = updateOutput;
           outputter.readAsText(new Blob([compressed]));
 
+          // Then decompress the compressed string
           var decompressor = new FileReader();
           decompressor.onload = decompress;
           decompressor.readAsArrayBuffer(new Blob([compressed]));
@@ -54,12 +51,10 @@
           // Once the data's been read, load it into a Uint8Array
           var buffer = new Uint8Array(e.target.result);
 
-          console.log(buffer);
-
           // Decompress the buffer
           var decompressed = compressjs.Bzip2.decompressFile(buffer);
 
-          // Load the decompressed result
+          // Load the decompressed result as a string and output it
           var reader = new FileReader();
           reader.onload = updateOutput;
           reader.readAsText(new Blob([decompressed]));
@@ -69,6 +64,8 @@
 
         var handleFileSelect = function(e) {
           clearOutput();
+
+          // Load up the file and read it as an ArrayBuffer
           var file = e.target.files[0];
           var reader = new FileReader();
           reader.onload = decompress;
@@ -77,13 +74,15 @@
 
         var handleFormSubmit = function(e) {
           clearOutput();
+
+          // Load up the string and read it as an Array Buffer
           var text = document.getElementById('text').value;
           var reader = new FileReader();
-          console.log(text);
           reader.onload = compress;
           reader.readAsArrayBuffer(new Blob([text]));
         }
 
+        // Set up our listeners for file changes and button clicks
         document.getElementById('files').addEventListener('change', handleFileSelect, false);
         document.getElementById('submit').addEventListener('click', handleFormSubmit, false);
       })();
